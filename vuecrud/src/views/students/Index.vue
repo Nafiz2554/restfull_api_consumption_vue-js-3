@@ -31,8 +31,18 @@
               <td>{{ student.phone }}</td>
               <td>{{ student.created_at }}</td>
               <td>
-                <router-link class="btn btn-success" to="/">Edit</router-link>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <router-link
+                  class="btn btn-success"
+                  :to="{ path: '/students/' + student.id + '/edit' }"
+                  >Edit</router-link
+                >
+                <button
+                  @click="deleteStudent(student.id)"
+                  type="button"
+                  class="btn btn-danger mx-2"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           </tbody>
@@ -65,6 +75,24 @@ export default {
         this.students = res.data.students;
         //console.log(this.students)
       });
+    },
+    deleteStudent(studentId) {
+      if (confirm("Are you sure, you want to delete this data?")) {
+        //console.log(studentId)
+        axios
+          .delete(`http://127.0.0.1:8000/api/students/${studentId}/delete`)
+          .then((res) => {
+            alert(res.data.message);
+            this.getStudents();
+          })
+          .catch(function (error) {
+            if (error.response) {
+              if (error.response.status == 404) {
+                alert(error.response.data.message);
+              }
+            }
+          });
+      }
     },
   },
 };
